@@ -1,7 +1,7 @@
 locals {
   common_tags = {
     company = var.company
-    project = "${var.company}-${var.project}"
+    project = "terraform on aws"
     billing_code = var.billing_code
   }
 }

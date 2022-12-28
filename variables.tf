@@ -19,7 +19,7 @@ variable "aws_region" {
 variable "company" {
     type = string
     description = "Company name"
-    default = "Nkosimi (pty) ltd"
+    default = "Nkosimi ltd"
 }
 
 variable "project" {
@@ -42,4 +42,16 @@ variable "enable_dns_hostnames" {
     type = bool
     description = "enable dnt hostname"
     default = true
+}
+
+variable "vpc_subnets_cdir_block" {
+    type = list(string)
+    description = "CIDR Block for subnets in vpc"
+    default = ["10.0.0.0/24", "10.0.1.0/24"]
+}
+
+variable "vpc_cidr_block" {
+    type = string
+    description = "vpc cidr block"
+    default = "0.0.0.0/0"
 }
