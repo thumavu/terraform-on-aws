@@ -1,9 +1,8 @@
 # aws_s3_bucket
 
-resource "aws_s3_bucket" "web-app"{
-  bucket = local.s3_bucket_name
-  acl = "private"
-  tags = local.common_tags
+resource "aws_s3_bucket" "web-app" {
+  bucket        = local.s3_bucket_name
+  tags          = local.common_tags
   force_destroy = true
 
   policy = <<POLICY

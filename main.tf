@@ -18,28 +18,28 @@ data "aws_availability_zones" "available" {
 resource "aws_vpc" "vpc" {
   cidr_block           = "10.0.0.0/16"
   enable_dns_hostnames = var.enable_dns_hostnames
-  tags = local.common_tags
+  tags                 = local.common_tags
 }
 
 resource "aws_internet_gateway" "igw" {
   vpc_id = aws_vpc.vpc.id
-  tags = local.common_tags
+  tags   = local.common_tags
 }
 
 resource "aws_subnet" "subnet1" {
   cidr_block              = var.vpc_subnets_cdir_block[0]
   vpc_id                  = aws_vpc.vpc.id
   map_public_ip_on_launch = true
-  availability_zone = data.aws_availability_zones.available.names[0]
-  tags = local.common_tags
+  availability_zone       = data.aws_availability_zones.available.names[0]
+  tags                    = local.common_tags
 }
 
 resource "aws_subnet" "subnet2" {
   cidr_block              = var.vpc_subnets_cdir_block[1]
   vpc_id                  = aws_vpc.vpc.id
   map_public_ip_on_launch = true
-  availability_zone = data.aws_availability_zones.available.names[1]
-  tags = local.common_tags
+  availability_zone       = data.aws_availability_zones.available.names[1]
+  tags                    = local.common_tags
 }
 
 # ROUTING #
