@@ -9,12 +9,15 @@ resource "aws_instance" "nginx1" {
     aws_iam_role_policy.allow_s3_all
   ]
   user_data = <<EOF
-#! /bin/bash
-sudo amazon-linux-extras install -y nginx1
-sudo service nginx start
-sudo rm /usr/share/nginx/html/index.html
-echo '<html><head><title>Taco Team Server</title></head><body style=\"background-color:#1F778D\"><p style=\"text-align: center;\"><span style=\"color:#FFFFFF;\"><span style=\"font-size:28px;\">You did it! Have a &#127790;</span></span></p></body></html>' | sudo tee /usr/share/nginx/html/index.html
-EOF
+    #! /bin/bash
+    sudo amazon-linux-extras install -y nginx1
+    sudo service nginx start
+    aws s3 cp s3://${aws_s3_bucket.web-app.id}/website/index-1.html /home/ec2-user/index.html
+    aws s3 cp s3://${aws_s3_bucket.web-app.id}/website/web-app.jpeg /home/ec2-user/web-app.jpeg
+    sudo rm /usr/share/nginx/html/index.html
+    sudo cp /home/ec2-user/index.html /usr/share/nginx/html/index.html
+    sudo cp /home/ec2-user/web-app.jpeg /usr/share/nginx/html/web-app.jpeg
+  EOF
   tags      = local.common_tags
 }
 
@@ -28,11 +31,14 @@ resource "aws_instance" "nginx2" {
     aws_iam_role_policy.allow_s3_all
   ]
   user_data = <<EOF
-#! /bin/bash
-sudo amazon-linux-extras install -y nginx1
-sudo service nginx start
-sudo rm /usr/share/nginx/html/index.html
-echo '<html><head><title>Taco Team Server 2</title></head><body style=\"background-color:#1F778D\"><p style=\"text-align: center;\"><span style=\"color:#FFFFFF;\"><span style=\"font-size:28px;\">You did it! Have a &#127790;</span></span></p></body></html>' | sudo tee /usr/share/nginx/html/index.html
-EOF
+    #! /bin/bash
+    sudo amazon-linux-extras install -y nginx1
+    sudo service nginx start
+    aws s3 cp s3://${aws_s3_bucket.web-app.id}/website/index.html /home/ec2-user/index.html
+    aws s3 cp s3://${aws_s3_bucket.web-app.id}/website/web-app-1.jpeg /home/ec2-user/web-app-1.jpeg
+    sudo rm /usr/share/nginx/html/index.html
+    sudo cp /home/ec2-user/index.html /usr/share/nginx/html/index.html
+    sudo cp /home/ec2-user/web-app-1.jpeg /usr/share/nginx/html/web-app-1.jpeg
+  EOF
   tags      = local.common_tags
 }

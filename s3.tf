@@ -50,19 +50,16 @@ resource "aws_s3_bucket_acl" "bucket_acl" {
 
 # aws_s3_bucket_object
 resource "aws_s3_bucket_object" "object" {
+  for_each = fileset("./website/", "*")
+
   bucket = aws_s3_bucket.web-app.bucket
-  key    = "/website/index.html"
-  source = "./website/index.html"
+  key    = "/website/${each.value}"
+  source = "./website/${each.value}"
 
-
-}
-
-resource "aws_s3_bucket_object" "graphic" {
-  bucket = aws_s3_bucket.web-app.bucket
-  key    = "/website/web-app.jpeg"
-  source = "./website/web-app.jpeg"
-
-
+  # The filemd5() function is available in Terraform 0.11.12 and later
+  # For Terraform 0.11.11 and earlier, use the md5() function and the file() function:
+  # etag = "${md5(file("path/to/file"))}"
+  etag = filemd5("./website/${each.value}")
 }
 
 # aws_iam_role
