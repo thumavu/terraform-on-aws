@@ -41,5 +41,17 @@ variable "vpc_subnets_cdir_block" {
 variable "vpc_cidr_block" {
   type        = string
   description = "vpc cidr block"
-  default     = "0.0.0.0/0"
+  default     = "10.0.0.0/16"
+}
+
+variable "aws_subnet_count" {
+  type = number
+  description = "Number of subnets to create"
+  default = 2
+}
+
+variable "aws_instance_count" {
+  type = number
+  description = "Number of instances to create"
+  default = 2
 }

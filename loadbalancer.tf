@@ -9,7 +9,7 @@ resource "aws_lb" "nginx" {
   internal           = false
   load_balancer_type = "application"
   security_groups    = [aws_security_group.nginx-alb-sg.id]
-  subnets            = [aws_subnet.subnet1.id, aws_subnet.subnet2.id]
+  subnets            = aws_subnet.subnets[*].id
 
   enable_deletion_protection = false
 
@@ -35,7 +35,8 @@ resource "aws_lb_target_group" "nginx" {
 # aws_lb_listener
 
 resource "aws_lb_listener" "nginx" {
-  load_balancer_arn = aws_lb.nginx.arn
+  count = var.aws_instance_count
+  load_balancer_arn = aws_lb.nginx[count.index].arn
   port              = "80"
   protocol          = "HTTP"
 
@@ -49,14 +50,9 @@ resource "aws_lb_listener" "nginx" {
 
 # aws_lb_target_group_attachment
 
-resource "aws_lb_target_group_attachment" "nginx1" {
+resource "aws_lb_target_group_attachment" "nginx" {
+  count = var.aws_instance_count
   target_group_arn = aws_lb_target_group.nginx.arn
-  target_id        = aws_instance.nginx1.id
-  port             = 80
-}
-
-resource "aws_lb_target_group_attachment" "nginx2" {
-  target_group_arn = aws_lb_target_group.nginx.arn
-  target_id        = aws_instance.nginx2.id
+  target_id        = aws_instance.nginx[count.index].id
   port             = 80
 }
