@@ -4,6 +4,12 @@ variable "aws_region" {
   default     = "us-east-1"
 }
 
+variable "naming_prefix" {
+  type = string
+  description = "Naming prefix for all resources"
+  default = "sizwe"
+}
+
 variable "company" {
   type        = string
   description = "Company name"
@@ -41,7 +47,7 @@ variable "vpc_subnets_cdir_block" {
 variable "vpc_cidr_block" {
   type        = string
   description = "vpc cidr block"
-  default     = "10.0.0.0/16"
+  default     = "0.0.0.0/8"
 }
 
 variable "aws_subnet_count" {
