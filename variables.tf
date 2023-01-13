@@ -5,9 +5,9 @@ variable "aws_region" {
 }
 
 variable "naming_prefix" {
-  type = string
+  type        = string
   description = "Naming prefix for all resources"
-  default = "sizwe"
+  default     = "sizwe"
 }
 
 variable "company" {
@@ -27,9 +27,8 @@ variable "billing_code" {
 }
 
 variable "ec2_instance_type" {
-  type        = string
+  type        = map(string)
   description = "ec2 instance type"
-  default     = "t2.micro"
 }
 
 variable "enable_dns_hostnames" {
@@ -45,19 +44,16 @@ variable "vpc_subnets_cdir_block" {
 }
 
 variable "vpc_cidr_block" {
-  type        = string
-  description = "vpc cidr block"
-  default     = "0.0.0.0/8"
+  type        = map(string)
+  description = "Base CIDR Block for VPC"
 }
 
 variable "aws_subnet_count" {
-  type = number
+  type        = map(number)
   description = "Number of subnets to create"
-  default = 2
 }
 
 variable "aws_instance_count" {
-  type = number
+  type        = map(number)
   description = "Number of instances to create"
-  default = 2
 }

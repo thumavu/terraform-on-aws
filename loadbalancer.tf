@@ -14,11 +14,11 @@ resource "aws_lb" "nginx" {
   enable_deletion_protection = false
 
   access_logs {
-    bucket  = aws_s3_bucket.web-app.bucket
+    bucket  = module.web_app_s3.web_bucket.id
     prefix  = "alb-logs"
     enabled = true
   }
-  tags = merge(local.common_tags, {Name = "${local.name_prefix}-alb"})
+  tags = merge(local.common_tags, { Name = "${local.name_prefix}-alb" })
 
 }
 
@@ -30,14 +30,13 @@ resource "aws_lb_target_group" "nginx" {
   protocol = "HTTP"
   vpc_id   = module.vpc.vpc_id
 
-  tags = merge(local.common_tags, {Name = "${local.name_prefix}-target-group"})
+  tags = merge(local.common_tags, { Name = "${local.name_prefix}-target-group" })
 
 }
 
 # aws_lb_listener
 
 resource "aws_lb_listener" "nginx" {
-  count = var.aws_instance_count
   load_balancer_arn = aws_lb.nginx.arn
   port              = "80"
   protocol          = "HTTP"
@@ -47,13 +46,13 @@ resource "aws_lb_listener" "nginx" {
     target_group_arn = aws_lb_target_group.nginx.arn
   }
 
-  tags = merge(local.common_tags, {Name = "${local.name_prefix}-lb-listener"})
+  tags = merge(local.common_tags, { Name = "${local.name_prefix}-lb-listener" })
 }
 
 # aws_lb_target_group_attachment
 
 resource "aws_lb_target_group_attachment" "nginx" {
-  count = var.aws_instance_count
+  count            = var.aws_instance_count[terraform.workspace]
   target_group_arn = aws_lb_target_group.nginx.arn
   target_id        = aws_instance.nginx[count.index].id
   port             = 80

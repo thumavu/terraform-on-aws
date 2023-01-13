@@ -1,11 +1,6 @@
 ##################################################################################
 # DATA
 ##################################################################################
-
-data "aws_ssm_parameter" "ami" {
-  name = "/aws/service/ami-amazon-linux-latest/amzn2-ami-hvm-x86_64-gp2"
-}
-
 data "aws_availability_zones" "available" {
   state = "available"
 }
@@ -16,19 +11,19 @@ data "aws_availability_zones" "available" {
 
 
 module "vpc" {
-  source = "terraform-aws-modules/vpc/aws"
+  source  = "terraform-aws-modules/vpc/aws"
   version = "=3.18.1"
 
   name = "my-vpc"
-  cidr = "10.0.0.0/16"
+  cidr = var.vpc_cidr_block[terraform.workspace]
 
-  azs             = slice(data.aws_availability_zones.available.names, 0, (var.aws_subnet_count))
-  public_subnets  = [for subnet in range(var.aws_subnet_count) : cidrsubnet(var.vpc_cidr_block, 8, subnet)]
+  azs            = slice(data.aws_availability_zones.available.names, 0, (var.aws_subnet_count[terraform.workspace]))
+  public_subnets = [for subnet in range(var.aws_subnet_count[terraform.workspace]) : cidrsubnet(var.vpc_cidr_block[terraform.workspace], 8, subnet)]
 
   enable_nat_gateway = false
   enable_vpn_gateway = false
 
-  tags = merge(local.common_tags, {Name = "${local.name_prefix}-vpc"})
+  tags = merge(local.common_tags, { Name = "${local.name_prefix}-vpc" })
 }
 
 # SECURITY GROUPS #
@@ -42,7 +37,7 @@ resource "aws_security_group" "nginx-sg" {
     from_port   = 80
     to_port     = 80
     protocol    = "tcp"
-    cidr_blocks = [var.vpc_cidr_block]
+    cidr_blocks = [var.vpc_cidr_block[terraform.workspace]]
   }
 
   # outbound internet access
@@ -50,7 +45,7 @@ resource "aws_security_group" "nginx-sg" {
     from_port   = 0
     to_port     = 0
     protocol    = "-1"
-    cidr_blocks = [var.vpc_cidr_block]
+    cidr_blocks = ["0.0.0.0/0"]
   }
   tags = local.common_tags
 }
@@ -65,7 +60,7 @@ resource "aws_security_group" "nginx-alb-sg" {
     from_port   = 80
     to_port     = 80
     protocol    = "tcp"
-    cidr_blocks = [var.vpc_cidr_block]
+    cidr_blocks = ["0.0.0.0/0"]
   }
 
   # outbound internet access
@@ -73,7 +68,7 @@ resource "aws_security_group" "nginx-alb-sg" {
     from_port   = 0
     to_port     = 0
     protocol    = "-1"
-    cidr_blocks = [var.vpc_cidr_block]
+    cidr_blocks = ["0.0.0.0/0"]
   }
   tags = local.common_tags
 }
